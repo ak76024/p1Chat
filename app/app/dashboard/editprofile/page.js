@@ -1,0 +1,209 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+
+export default function EditProfile() {
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        fetch("/api/user")
+            .then((res) => res.json())
+            .then((data) => {
+                setProfile(data);
+            });
+    }, [])
+
+    useEffect(() => {
+        console.log(profile);
+    }, [profile]);
+
+    const handleChange = (e) => {
+        setProfile({
+            ...profile,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        console.log(profile);
+
+        alert("Profile Updated Successfully!");
+    };
+
+    return (
+        <main className="min-h-screen bg-[#111827] text-white flex justify-center items-center py-10 px-4">
+            <div className="w-full max-w-3xl bg-[#1F2937] rounded-2xl shadow-xl p-8">
+
+                {/* Heading */}
+
+                <h1 className="text-3xl font-bold text-center mb-10">
+                    Edit Profile
+                </h1>
+
+                {/* Profile */}
+
+                <div className="flex flex-col items-center mb-10">
+
+                    <Image
+                        src={profile?.image || "/profile.png"}
+                        alt="profile"
+                        width={120}
+                        height={120}
+                        className="rounded-full object-cover border-4 border-slate-600"
+                    />
+
+                    <button className="mt-4 text-indigo-400 hover:text-indigo-300 font-medium">
+                        Change Profile Photo
+                    </button>
+
+                </div>
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-6"
+                >
+
+                    {/* Name */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            value={profile?.name || ""}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Username */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            value={profile?.userName || ""}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Bio */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Bio
+                        </label>
+
+                        <textarea
+                            rows={4}
+                            name="bio"
+                            value={profile.bio}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500 resize-none"
+                        />
+                    </div>
+
+                    {/* Email */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            value={profile?.email || ""}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Website */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Website
+                        </label>
+
+                        <input
+                            type="text"
+                            name="website"
+                            value={profile.website}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Location */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            name="location"
+                            value={profile.location}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* Gender */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Gender
+                        </label>
+
+                        <select
+                            name="gender"
+                            value={profile.gender}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        >
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    {/* Buttons */}
+
+                    <div className="flex justify-end gap-4 pt-6">
+
+                        <button
+                            type="button"
+                            className="px-6 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 transition"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition"
+                        >
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </main>
+    );
+}
