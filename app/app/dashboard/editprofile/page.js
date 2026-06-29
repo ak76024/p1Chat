@@ -1,36 +1,70 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { toast } from "react-toastify";
 
 export default function EditProfile() {
     const [profile, setProfile] = useState({});
-
-    useEffect(() => {
+    const fetchDataAndSet = () => {
         fetch("/api/user")
             .then((res) => res.json())
             .then((data) => {
                 setProfile(data);
             });
-    }, [])
+    }
+
+    const saveData = async () => {
+        const laoding= toast.loading("Updating...",{theme:"dark"});
+        if (!profile.name) {
+            toast.error("Name is required",{theme:"dark"});
+            return;
+        }
+
+        if (!profile.email) {
+            toast.error("Email is required",{theme:"dark"});
+            return;
+        }
+
+        if (!profile.userName) {
+            toast.error("Username is required",{theme:"dark"});
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/user", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(profile),
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.updateData) {
+                toast.success("Profile Updated Successfully",{theme:"dark"});
+                fetchDataAndSet();
+            } else {
+                toast.error(data.message || "Something went wrong",{theme:"dark"});
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Network Error",{theme:"dark"});
+        }finally{
+            toast.dismiss(laoding);
+        }
+    };
 
     useEffect(() => {
-        console.log(profile);
-    }, [profile]);
+        fetchDataAndSet();
+    }, [])
+    
 
     const handleChange = (e) => {
         setProfile({
             ...profile,
             [e.target.name]: e.target.value,
         });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        console.log(profile);
-
-        alert("Profile Updated Successfully!");
     };
 
     return (
@@ -47,22 +81,17 @@ export default function EditProfile() {
 
                 <div className="flex flex-col items-center mb-10">
 
-                    <Image
-                        src={profile?.image || "/profile.png"}
+                    <img
+                        src={profile?.profilePicture || "/profile.png"}
                         alt="profile"
                         width={120}
                         height={120}
                         className="rounded-full object-cover border-4 border-slate-600"
                     />
 
-                    <button className="mt-4 text-indigo-400 hover:text-indigo-300 font-medium">
-                        Change Profile Photo
-                    </button>
-
                 </div>
 
                 <form
-                    onSubmit={handleSubmit}
                     className="space-y-6"
                 >
 
@@ -91,8 +120,24 @@ export default function EditProfile() {
 
                         <input
                             type="text"
-                            name="username"
+                            name="userName"
                             value={profile?.userName || ""}
+                            onChange={handleChange}
+                            className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
+                        />
+                    </div>
+
+                    {/* profile img */}
+
+                    <div>
+                        <label className="block mb-2 text-sm text-slate-300">
+                            Profile Picture
+                        </label>
+
+                        <input
+                            type="text"
+                            name="profilePicture"
+                            value={profile?.profilePicture || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
                         />
@@ -108,7 +153,7 @@ export default function EditProfile() {
                         <textarea
                             rows={4}
                             name="bio"
-                            value={profile.bio}
+                            value={profile?.bio || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500 resize-none"
                         />
@@ -140,7 +185,7 @@ export default function EditProfile() {
                         <input
                             type="text"
                             name="website"
-                            value={profile.website}
+                            value={profile?.website || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
                         />
@@ -156,7 +201,7 @@ export default function EditProfile() {
                         <input
                             type="text"
                             name="location"
-                            value={profile.location}
+                            value={profile?.location || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
                         />
@@ -171,13 +216,13 @@ export default function EditProfile() {
 
                         <select
                             name="gender"
-                            value={profile.gender}
+                            value={profile?.gender || ""}
                             onChange={handleChange}
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
                         >
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
+                            <option value="m">Male</option>
+                            <option value="f">Female</option>
+                            <option value="o">Other</option>
                         </select>
                     </div>
 
@@ -187,13 +232,7 @@ export default function EditProfile() {
 
                         <button
                             type="button"
-                            className="px-6 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 transition"
-                        >
-                            Cancel
-                        </button>
-
-                        <button
-                            type="submit"
+                            onClick={saveData}
                             className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition"
                         >
                             Save Changes

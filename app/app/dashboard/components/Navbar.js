@@ -1,8 +1,8 @@
 "use client";
 
 import { FiBell, FiMoon, FiSearch } from "react-icons/fi";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -40,18 +40,10 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="flex items-center gap-3 cursor-pointer">
-          <Image
-            src="/profile.png"
-            alt="profile"
-            width={45}
-            height={45}
-            className="rounded-full border border-slate-600"
-          />
-
-          <div>
+          <Link href={`/user/${session.user.userName}`}>
             <h3 className="text-white font-semibold">{session.user.name.split(" ")[0]}</h3>
             <p className="text-xs text-green-400">Online</p>
-          </div>
+          </Link>
         </div>
       </div>
     </header>

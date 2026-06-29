@@ -20,11 +20,6 @@ export default function Settings() {
                                 <span>→</span>
                             </button>
                         </Link>
-
-                        <button className="w-full flex justify-between hover:bg-slate-700 p-3 rounded-lg">
-                            <span>Change Profile Picture</span>
-                            <span>→</span>
-                        </button>
                     </div>
                 </section>
 

@@ -8,6 +8,7 @@ const UserSchema = new Schema({
     },
     userName: {
         type: String,
+        unique: true,
         required: true
     },
     email: {
@@ -40,6 +41,22 @@ const UserSchema = new Schema({
     following: {
         type: Array,
         default: []
+    },
+    friends: {
+        type: Array,
+        default: []
+    },
+    totalFollowers: {
+        type: Number,
+        default: 0
+    },
+    totalFollowing: {
+        type: Number,
+        default: 0
+    },
+    totalFriends: {
+        type: Number,
+        default: 0
     },
     time: {
         type: Date,

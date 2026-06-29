@@ -1,15 +1,10 @@
-import {
-  FiHome,
-  FiUsers,
-  FiSettings,
-  FiLogOut,
-  FiBell,
-} from "react-icons/fi";
+import {FiHome,FiUsers,FiSettings,FiLogOut,FiBell,} from "react-icons/fi";
+import { CgProfile } from "react-icons/cg";
 import React from 'react'
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-
+import { useSession,signOut } from "next-auth/react";
 const SideBar = () => {
+    const {data:session} = useSession();
     const menu = [
         {
             title:"Home",
@@ -25,6 +20,11 @@ const SideBar = () => {
             title:"Users",
             icon:<FiUsers/>,
             href:"/dashboard/users"
+        },
+        {
+            title:"Profile",
+            icon:<CgProfile />,
+            href:`/user/${session.user.userName}`
         },
         {
             title:"Settings",

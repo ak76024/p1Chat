@@ -175,7 +175,7 @@ export default function message() {
                 </div>
             </section>
             <section className="w-2/3 h-full">
-                <ChatBox />
+                <NullMsg />
             </section>
         </main>
     );
