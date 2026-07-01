@@ -1,20 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectDB from "@/db/connect";
 import User from "@/models/User";
 
 export async function GET(req) {
   try {
     await connectDB();
-
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json(
-        { message: "Unauthorized",userfound: false },
-        { status: 401 }
-      );
-    }
 
     const {searchParams} = new URL(req.url);
     const userName = searchParams.get("userName");

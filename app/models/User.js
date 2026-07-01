@@ -28,6 +28,19 @@ const UserSchema = new Schema({
     location: {
         type: String
     },
+    otp: {
+        type: String
+    },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    otpHash:{
+        type: String
+    },
+    otpExpiry: {
+        type: Date,
+    },
     website: {
         type: String
     },

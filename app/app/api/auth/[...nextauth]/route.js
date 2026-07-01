@@ -21,7 +21,8 @@ export const authOptions = {
             name : user.name,
             email: user.email,
             userName: user.email.split('@')[0],
-            profilePicture: user.image
+            profilePicture: user.image,
+            verified: true
           })
           user.name= newuser.name;
         }else {

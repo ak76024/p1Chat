@@ -3,7 +3,21 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/db/connect";
 import User from "@/models/User";
-import ProfilePage from "@/app/user/[userName]/page";
+import bcrypt from "bcryptjs";
+import { sendEmail } from "@/app/action/userAction";
+
+function generateCode(length = 8) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return result;
+}
 
 export async function GET() {
   try {
@@ -83,11 +97,11 @@ export async function PUT(req) {
       );
     }
 
-    const { name, userName, email,profilePicture, bio, gender, location, website } = data;
+    const { name, userName, email, profilePicture, bio, gender, location, website } = data;
 
     await User.findOneAndUpdate(
       { _id: session.user.id },
-      { $set: { name, userName, email,profilePicture, bio, gender, location, website } },
+      { $set: { name, userName, email, profilePicture, bio, gender, location, website } },
       {
         new: true,
         select: "-password -followers -following -time -_id"
@@ -102,6 +116,94 @@ export async function PUT(req) {
         message: "Internal Server Error",
         updateData: false
       },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req) {
+  try {
+    await connectDB();
+
+    let data = await req.json();
+
+    if (!data.email || !data.userName || !data.password || !data.confirmPassword || !data.name) {
+      return NextResponse.json(
+        { message: "Bad Request", signup: false },
+        { status: 400 }
+      );
+    }
+
+    if (data.password !== data.confirmPassword) {
+      return NextResponse.json(
+        { message: "Password doesn't match", signup: false },
+        { status: 400 }
+      );
+    }
+    // if (data.password.length < 8) {
+    //   return NextResponse.json(
+    //     {
+    //       signup: false,
+    //       message: "Password must be at least 8 characters.",
+    //     },
+    //     {
+    //       status: 400,
+    //     }
+    //   );
+    // }
+
+    const existingUser = await User.findOne({
+      $or: [
+        { email: data.email },
+        { userName: data.userName },
+      ],
+    });
+
+    if (existingUser) {
+      if (existingUser.email === data.email) {
+        return NextResponse.json(
+          { message: "Email already exists", signup: false },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json(
+        { message: "Username already exists", signup: false },
+        { status: 400 }
+      );
+    }
+
+    let otp= Math.floor(100000 + Math.random() * 900000).toString();
+    let otph= await bcrypt.hash(otp, 10);
+    let otpHash = generateCode(25);
+
+    const hashPass = await bcrypt.hash(data.password.trim(), 10);
+
+    let newUser = await User.create({
+      name: data.name.trim(),
+      userName: data.userName.trim(),
+      email: data.email.trim(),
+      password: hashPass,
+      otp: otph,
+      otpHash: otpHash,
+      otpExpiry: Date.now() + 5*60*1000,
+    });
+
+    if (newUser) {
+      let emailSent = await sendEmail(data.email.trim(), "Verify your email", `Your verification code is ${otp}`);
+      if (!emailSent.emailSent) {
+        return NextResponse.json({ message: "Email not sent", signup: false });
+      }
+      return NextResponse.json({ signup: true, otpHash });
+    } else {
+      return NextResponse.json(
+        { message: "Internal Server Error", signup: false },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "Internal Server Error", signup: false },
       { status: 500 }
     );
   }

@@ -26,10 +26,11 @@ export default function ProfilePage() {
 
 
     return (
-        <main className="w-screen min-h-screen bg-[#111827] text-white py-5">
-            <div className="w-full h-full flex items-center justify-center gap-4">
+        <main className="w-screen min-h-screen bg-[#111827] text-white py-15">
+            <div className="w-full h-full flex items-center justify-center gap-4 px-5">
                 {profile && <><div className="w-1/2">
                     <div
+                    className="m-auto"
                         style={{
                             width: "400px",
                             height: "400px",
@@ -39,7 +40,7 @@ export default function ProfilePage() {
                         }}
                     />
                 </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="w-1/2 flex flex-col gap-2">
                         <h1 className="text-3xl font-bold">
                             {profile.userName}
                         </h1>

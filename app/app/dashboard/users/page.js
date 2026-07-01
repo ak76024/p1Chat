@@ -1,28 +1,44 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
 
 export default function UsersPage() {
   const [users, setusers] = useState([]);
+  const [search, setsearch] = useState("");
 
   const searchUser = async (e) => {
-    let search = e.target.value;
-    search = search.trim();
-    if (!search) {
-      setusers([]);
-      return;
+    try {
+      let search = e.trim();
+      if (!search) {
+        setusers([]);
+        return;
+      }
+      const req = await fetch(`/api/searchUser?search=${encodeURIComponent(search)}`);
+      const data = await req.json();
+      if (!data.searchUser) {
+        setusers([]);
+        toast.error(data.message, { theme: "dark" });
+        return
+      }
+      setusers(data.user);
+    } catch (error) {
+      toast.error(`${error.message}`, { theme: "dark" });
     }
-    const req = await fetch(`/api/searchUser?search=${search}`);
-    const data = await req.json();
-    if(!data.searchUser){
-      setusers([]);
-      toast.error(data.message,{theme:"dark"});
-      return
-    }
-    setusers(data.user);
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (search.trim()) {
+        searchUser(search);
+      } else {
+        setusers([]);
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   return (
     <main className="p-8">
@@ -36,8 +52,9 @@ export default function UsersPage() {
         <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
         <input
-          onChange={searchUser}
           type="text"
+          value={search}
+          onChange={(e) => setsearch(e.target.value)}
           placeholder="Search users..."
           className="w-full bg-slate-800 rounded-xl pl-11 pr-4 py-3 outline-none border border-slate-700"
         />
@@ -49,7 +66,7 @@ export default function UsersPage() {
         {users.map((user) => (
           <div
             key={user.userName}
-            onClick={()=>redirect(`/user/${user.userName}`)}
+            onClick={() => redirect(`/user/${user.userName}`)}
             className="bg-slate-800 cursor-pointer rounded-xl p-5 flex justify-between items-center hover:bg-slate-700 transition"
           >
             <div className="flex items-center gap-4">
