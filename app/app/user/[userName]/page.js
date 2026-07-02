@@ -34,7 +34,7 @@ export default function ProfilePage() {
                         style={{
                             width: "400px",
                             height: "400px",
-                            backgroundImage: `url("${profile.profilePicture}")`,
+                            backgroundImage: `url("${profile?.profilePicture || "/avatar.gif"}")`,
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                         }}

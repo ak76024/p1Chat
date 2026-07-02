@@ -13,10 +13,15 @@ export default function VerifyOTP() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef([]);
   const check = params.get("check");
+  const reason = params.get("reason");
   const redirect = useRouter()
 
   useEffect(() => {
     (async () => {
+      if(!check){
+        toast.error("Invalid OTP Request", { theme: "dark" })
+        redirect.push("/login")
+      }
       let aa = toast.loading("Verifying OTP Page...", { theme: "dark" })
       let a = await verifyOtpPage(check)
       if (!a) {
@@ -78,15 +83,22 @@ export default function VerifyOTP() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ otpr ,otpHash:check}),
+        body: JSON.stringify({ otpr ,otpHash:check, reason }),
       })
 
       const data = await res.json();
       if(data.verified){
-        toast.success("OTP Verified Successfully, Login Now..", {
-          theme: "dark",
-        })
-        redirect.push("/login")
+        if(reason === "forgotPass"){
+          toast.success("OTP Verified Successfully, Reset Password Now..", {
+            theme: "dark",
+          })
+          redirect.push(`/resetPass?check=${data.hash}`)
+        }else if(reason === "signup"){
+          toast.success("OTP Verified Successfully, Login Now..", {
+            theme: "dark",
+          })
+          redirect.push("/login")
+        }
       }else{
         toast.error(data.message, {
           theme: "dark",
@@ -100,6 +112,31 @@ export default function VerifyOTP() {
       toast.dismiss(loading);
     }
   };
+
+  const resendCode=async ()=>{
+    let loading = toast.loading("Sending OTP...", { theme: "dark" });
+    setresendOtp(false)
+    try{
+      let req = await fetch("/api/forgotPass", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otpHash:check }),
+      })
+      let data = await req.json();
+      if(data.sendOtp){
+        toast.success("OTP Sent Successfully", { theme: "dark" });
+      }else{
+        toast.error(data.message, { theme: "dark" });
+      }
+    }catch(error){
+      toast.error(`${error.message}`, { theme: "dark" });
+    }finally{
+      toast.dismiss(loading);
+      settimer(25)
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#111827] flex items-center justify-center px-4">
@@ -157,7 +194,7 @@ export default function VerifyOTP() {
           </span>
         </p>
 
-        <button disabled={!resendOtp} className="w-full disabled:opacity-50 disabled:hover:from-indigo-600 disabled:hover:to-purple-600 disabled:cursor-not-allowed cursor-pointer mt-3 text-indigo-400 hover:text-indigo-300 transition">
+        <button onClick={resendCode} disabled={!resendOtp} className="w-full disabled:opacity-50 disabled:hover:from-indigo-600 disabled:hover:to-purple-600 disabled:cursor-not-allowed cursor-pointer mt-3 text-indigo-400 hover:text-indigo-300 transition">
           Resend Code
         </button>
 

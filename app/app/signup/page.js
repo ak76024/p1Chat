@@ -60,7 +60,7 @@ export default function SignupPage() {
       const data = await req.json();
       if (data.signup) {
         toast.success("Check your email", { theme: "dark" });
-        router.push(`/otp?check=${data.otpHash}`);
+        router.push(`/otp?check=${data.otpHash}&reason=signup`);
       } else {
         toast.error(data.message, { theme: "dark" });
       }

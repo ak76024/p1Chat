@@ -73,8 +73,8 @@ export default function UsersPage() {
 
               <div className="relative">
                 <img
-                  src={user.profilePicture}
-                  className="w-14 h-14 rounded-full"
+                  src={user?.profilePicture || "/avatar.gif"}
+                  className="w-14 h-14 rounded-full object-cover"
                 />
 
                 <span

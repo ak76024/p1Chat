@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <header className="h-20 bg-slate-800 border-b border-slate-700 px-8 flex items-center justify-between">
       {/* Search */}
-      <div className="relative w-96">
+      {/* <div className="relative w-96">
         <FiSearch
           className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
           size={20}
@@ -20,6 +20,15 @@ export default function Navbar() {
           placeholder="Search users..."
           className="w-full bg-slate-700 text-white rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400"
         />
+      </div> */}
+      <div>
+      <h1 className="text-3xl font-bold">
+          Welcome Back, {session.user.name} 👋
+        </h1>
+
+        <p className="text-gray-200 mt-2">
+          Stay connected with your friends.
+        </p>
       </div>
 
       {/* Right Side */}

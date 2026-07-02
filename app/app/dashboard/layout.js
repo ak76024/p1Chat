@@ -3,12 +3,14 @@ import Sidebar from "./components/SideBar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function DashboardLayout({ children }) {
   const {status } = useSession();
   const router = useRouter();
   useEffect(() => {
     if (status === "unauthenticated") {
+      toast.info("You are not logged in", { theme: "dark" });
       router.push("/login");
     }
   }, [status, router]);

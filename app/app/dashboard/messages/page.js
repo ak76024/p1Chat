@@ -71,7 +71,7 @@ function ChatBox() {
             {/* Header */}
             <nav className="h-16 border-b border-slate-700 px-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-cover bg-no-repeat bg-center" style={{ backgroundImage: "url(/profile.png)", }}></div>
+                    <div className="w-10 h-10 rounded-full bg-cover bg-no-repeat bg-center" style={{ backgroundImage: `url(/avatar.gif)`, }}></div>
 
                     <div>
                         <h3 className="text-white font-semibold">Akash</h3>
@@ -176,6 +176,7 @@ export default function message() {
             </section>
             <section className="w-2/3 h-full">
                 <NullMsg />
+                {/* <ChatBox/> */}
             </section>
         </main>
     );

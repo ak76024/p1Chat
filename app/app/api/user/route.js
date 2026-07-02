@@ -4,20 +4,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/db/connect";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { sendEmail } from "@/app/action/userAction";
-
-function generateCode(length = 8) {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  let result = "";
-
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  return result;
-}
+import { sendEmail,generateOtp } from "@/app/action/userAction";
 
 export async function GET() {
   try {
@@ -171,10 +158,8 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-
-    let otp= Math.floor(100000 + Math.random() * 900000).toString();
-    let otph= await bcrypt.hash(otp, 10);
-    let otpHash = generateCode(25);
+    
+    let { otp, otph, otpHash } = await generateOtp();
 
     const hashPass = await bcrypt.hash(data.password.trim(), 10);
 
@@ -185,11 +170,19 @@ export async function POST(req) {
       password: hashPass,
       otp: otph,
       otpHash: otpHash,
-      otpExpiry: Date.now() + 5*60*1000,
+      otpExpiry: Date.now() + 3*60*1000,
     });
 
+    const emailSubject="Verify your email";
+    const emailBody = `
+      <p>Hi ${data.name},</p>
+      <p>Thank you for signing up. To complete your registration, please verify your email address by entering the following verification code:</p>
+      <p><b>${otp}</b></p>
+      <p>Please note that this code will expire in 3 minutes.</p>
+      <p>Thanks again for joining us!</p>`;
+
     if (newUser) {
-      let emailSent = await sendEmail(data.email.trim(), "Verify your email", `Your verification code is ${otp}`);
+      let emailSent = await sendEmail(data.email.trim(), emailSubject, emailBody);
       if (!emailSent.emailSent) {
         return NextResponse.json({ message: "Email not sent", signup: false });
       }
