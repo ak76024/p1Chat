@@ -18,7 +18,7 @@ export async function GET(req) {
 
     const user = await User.findOne({
       userName: userName,
-    }).select("-password -followers -friends -following -time -_id");
+    }).select("-password -followers -friends -following -time");
 
     if(!user) {
       return NextResponse.json(

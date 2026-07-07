@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 export default function VerifyOTP() {
-  const [timer, settimer] = useState(25)
+  const [timer, settimer] = useState(3*60)
   const [resendOtp, setresendOtp] = useState(false)
   const params = useSearchParams();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -134,7 +134,7 @@ export default function VerifyOTP() {
       toast.error(`${error.message}`, { theme: "dark" });
     }finally{
       toast.dismiss(loading);
-      settimer(25)
+      settimer(3*60)
     }
   }
 
@@ -190,7 +190,7 @@ export default function VerifyOTP() {
         <p className="text-center text-slate-400 mt-6">
           Resend code in
           <span className="text-indigo-400 font-semibold ml-1">
-            00:{timer > 9 ? timer : `0${timer}`}
+            {String(Math.floor(timer / 60)).padStart(2, "0")}:{String(timer % 60).padStart(2, "0")}
           </span>
         </p>
 

@@ -47,30 +47,6 @@ const UserSchema = new Schema({
     profilePicture: {
         type: String
     },
-    followers: {
-        type: Array,
-        default: []
-    },
-    following: {
-        type: Array,
-        default: []
-    },
-    friends: {
-        type: Array,
-        default: []
-    },
-    totalFollowers: {
-        type: Number,
-        default: 0
-    },
-    totalFollowing: {
-        type: Number,
-        default: 0
-    },
-    totalFriends: {
-        type: Number,
-        default: 0
-    },
     time: {
         type: Date,
         default: Date.now

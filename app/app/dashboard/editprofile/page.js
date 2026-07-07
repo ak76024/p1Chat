@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { userNameContext } from "../context/context";
 
 export default function EditProfile() {
+    const { setuserName } = React.useContext(userNameContext);
     const [profile, setProfile] = useState({});
     const fetchDataAndSet = () => {
         fetch("/api/user")
@@ -15,22 +17,27 @@ export default function EditProfile() {
 
     const saveData = async () => {
         const laoding= toast.loading("Updating...",{theme:"dark"});
-        if (!profile.name) {
-            toast.error("Name is required",{theme:"dark"});
-            return;
-        }
-
-        if (!profile.email) {
-            toast.error("Email is required",{theme:"dark"});
-            return;
-        }
-
-        if (!profile.userName) {
-            toast.error("Username is required",{theme:"dark"});
-            return;
-        }
-
         try {
+            if (!profile.name) {
+                toast.error("Name is required",{theme:"dark"});
+                return;
+            }
+    
+            if (!profile.email) {
+                toast.error("Email is required",{theme:"dark"});
+                return;
+            }
+    
+            if (!profile.userName) {
+                toast.error("Username is required",{theme:"dark"});
+                return;
+            }
+    
+            // check bio length
+            if(profile.bio && profile.bio.length > 100){
+                toast.error("Bio must be less than 100 characters",{theme:"dark"});
+                return;
+            }
             const res = await fetch("/api/user", {
                 method: "PUT",
                 headers: {
@@ -43,6 +50,7 @@ export default function EditProfile() {
 
             if (res.ok && data.updateData) {
                 toast.success("Profile Updated Successfully",{theme:"dark"});
+                setuserName(profile.userName);
                 fetchDataAndSet();
             } else {
                 toast.error(data.message || "Something went wrong",{theme:"dark"});
@@ -150,6 +158,10 @@ export default function EditProfile() {
                             Bio
                         </label>
 
+                            {/* show bio length */}
+                            <div className="flex justify-end py-1 items-center">
+                                <span>{profile?.bio?.length || 0}/100</span>
+                            </div>
                         <textarea
                             rows={4}
                             name="bio"

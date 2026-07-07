@@ -1,29 +1,24 @@
 "use client";
 
 import { FiBell, FiMoon, FiSearch } from "react-icons/fi";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const [user, setuser] = useState(null);
+  useEffect(() => {
+    (async()=>{
+      let user = await fetch('/api/user');
+      let {name} = await user.json();
+      setuser(name);
+    })()
+  }, [])
+  
   return (
     <header className="h-20 bg-slate-800 border-b border-slate-700 px-8 flex items-center justify-between">
-      {/* Search */}
-      {/* <div className="relative w-96">
-        <FiSearch
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          size={20}
-        />
-
-        <input
-          type="text"
-          placeholder="Search users..."
-          className="w-full bg-slate-700 text-white rounded-xl pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-400"
-        />
-      </div> */}
       <div>
       <h1 className="text-3xl font-bold">
-          Welcome Back, {session.user.name} 👋
+          Welcome Back, {user} 👋
         </h1>
 
         <p className="text-gray-200 mt-2">
@@ -49,8 +44,8 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="flex items-center gap-3 cursor-pointer">
-          <Link href={`/user/${session.user.userName}`}>
-            <h3 className="text-white font-semibold">{session.user.name.split(" ")[0]}</h3>
+          <Link href={`/user/${user}`}>
+            <h3 className="text-white font-semibold">{user?.split(" ")[0]}</h3>
             <p className="text-xs text-green-400">Online</p>
           </Link>
         </div>

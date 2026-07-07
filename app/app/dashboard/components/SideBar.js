@@ -1,10 +1,12 @@
+"use client"
 import {FiHome,FiUsers,FiSettings,FiLogOut,FiBell,} from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import React from 'react'
 import Link from "next/link";
-import { useSession,signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { userNameContext } from "../context/context";
 const SideBar = () => {
-    const {data:session} = useSession();
+    const {userName} = React.useContext(userNameContext);
     const menu = [
         {
             title:"Home",
@@ -24,7 +26,7 @@ const SideBar = () => {
         {
             title:"Profile",
             icon:<CgProfile />,
-            href:`/user/${session.user.userName}`
+            href:`/user/${userName}`
         },
         {
             title:"Settings",

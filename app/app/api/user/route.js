@@ -4,7 +4,7 @@ import { authOptions } from "../auth/[...nextauth]/route";
 import connectDB from "@/db/connect";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { sendEmail,generateOtp } from "@/app/action/userAction";
+import { sendEmail, generateOtp } from "@/app/action/userAction";
 
 export async function GET() {
   try {
@@ -62,9 +62,29 @@ export async function PUT(req) {
       );
     }
 
+    if (!data) {
+      return NextResponse.json(
+        {
+          message: "Bad Request",
+          updateData: false
+        },
+        { status: 400 }
+      );
+    }
+    let {name,userName,email,profilePicture,bio,gender,location,website,} = data;
+
+    name = name?.trim();
+    userName = userName?.trim();
+    email = email?.trim().toLowerCase();
+    profilePicture = profilePicture?.trim();
+    bio = bio?.trim();
+    gender = gender?.trim();
+    location = location?.trim();
+    website = website?.trim();
+
     // check email and username already exits
-    const emailExists = await User.findOne({ email: data.email });
-    const userNameExists = await User.findOne({ userName: data.userName });
+    const emailExists = await User.findOne({ email: email });
+    const userNameExists = await User.findOne({ userName: userName });
     if (emailExists && emailExists._id.toString() !== user._id.toString()) {
       return NextResponse.json(
         {
@@ -84,7 +104,15 @@ export async function PUT(req) {
       );
     }
 
-    const { name, userName, email, profilePicture, bio, gender, location, website } = data;
+    if(bio.length > 100){
+      return NextResponse.json(
+        {
+          message: "Bio must be less than 100 characters",
+          updateData: false
+        },
+        { status: 400 }
+      );
+    }
 
     await User.findOneAndUpdate(
       { _id: session.user.id },
@@ -158,7 +186,7 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    
+
     let { otp, otph, otpHash } = await generateOtp();
 
     const hashPass = await bcrypt.hash(data.password.trim(), 10);
@@ -170,10 +198,10 @@ export async function POST(req) {
       password: hashPass,
       otp: otph,
       otpHash: otpHash,
-      otpExpiry: Date.now() + 3*60*1000,
+      otpExpiry: Date.now() + 3 * 60 * 1000,
     });
 
-    const emailSubject="Verify your email";
+    const emailSubject = "Verify your email";
     const emailBody = `
       <p>Hi ${data.name},</p>
       <p>Thank you for signing up. To complete your registration, please verify your email address by entering the following verification code:</p>
