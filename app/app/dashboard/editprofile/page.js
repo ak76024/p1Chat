@@ -23,11 +23,6 @@ export default function EditProfile() {
                 return;
             }
     
-            if (!profile.email) {
-                toast.error("Email is required",{theme:"dark"});
-                return;
-            }
-    
             if (!profile.userName) {
                 toast.error("Username is required",{theme:"dark"});
                 return;
@@ -182,7 +177,7 @@ export default function EditProfile() {
                             type="email"
                             name="email"
                             value={profile?.email || ""}
-                            onChange={handleChange}
+                            readOnly
                             className="w-full bg-slate-800 rounded-lg px-4 py-3 outline-none border border-slate-700 focus:border-indigo-500"
                         />
                     </div>

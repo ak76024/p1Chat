@@ -47,6 +47,10 @@ const UserSchema = new Schema({
     profilePicture: {
         type: String
     },
+    totalFriends: {
+        type: Number,
+        default: 0
+    },
     time: {
         type: Date,
         default: Date.now

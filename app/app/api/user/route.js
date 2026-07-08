@@ -71,29 +71,18 @@ export async function PUT(req) {
         { status: 400 }
       );
     }
-    let {name,userName,email,profilePicture,bio,gender,location,website,} = data;
+    let {name,userName,profilePicture,bio,gender,location,website,} = data;
 
     name = name?.trim();
     userName = userName?.trim();
-    email = email?.trim().toLowerCase();
     profilePicture = profilePicture?.trim();
     bio = bio?.trim();
     gender = gender?.trim();
     location = location?.trim();
     website = website?.trim();
 
-    // check email and username already exits
-    const emailExists = await User.findOne({ email: email });
+    // check username already exits
     const userNameExists = await User.findOne({ userName: userName });
-    if (emailExists && emailExists._id.toString() !== user._id.toString()) {
-      return NextResponse.json(
-        {
-          message: "Email already exists",
-          updateData: false
-        },
-        { status: 400 }
-      );
-    }
     if (userNameExists && userNameExists._id.toString() !== user._id.toString()) {
       return NextResponse.json(
         {
@@ -104,7 +93,7 @@ export async function PUT(req) {
       );
     }
 
-    if(bio.length > 100){
+    if(bio && bio.length > 100){
       return NextResponse.json(
         {
           message: "Bio must be less than 100 characters",
@@ -116,7 +105,7 @@ export async function PUT(req) {
 
     await User.findOneAndUpdate(
       { _id: session.user.id },
-      { $set: { name, userName, email, profilePicture, bio, gender, location, website } },
+      { $set: { name, userName, profilePicture, bio, gender, location, website } },
       {
         new: true,
         select: "-password -followers -following -time -_id"
