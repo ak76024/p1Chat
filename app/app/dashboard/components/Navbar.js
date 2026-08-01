@@ -6,11 +6,17 @@ import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [user, setuser] = useState(null);
+  const [userName, setuserName] = useState(null);
+  const [notification, setnotification] = useState(0)
   useEffect(() => {
     (async()=>{
       let user = await fetch('/api/user');
-      let {name} = await user.json();
+      let {name,userName} = await user.json();
       setuser(name);
+      setuserName(userName);
+      let notificationNo = await fetch('/dashboard/api/notifications');
+      let notifications = await notificationNo.json();
+      setnotification(notifications.notifications);
     })()
   }, [])
   
@@ -29,13 +35,14 @@ export default function Navbar() {
       {/* Right Side */}
       <div className="flex items-center gap-6">
         {/* Notification */}
-        <button className="relative text-slate-300 hover:text-white transition">
+        <Link href="/dashboard/notification" className="relative text-slate-300 hover:text-white transition">
           <FiBell size={22} />
-
-          <span className="absolute -top-2 -right-3 h-5 min-w-6 px-1 text-center rounded-full bg-red-500 text-xs flex items-center justify-center text-white">
-            3
-          </span>
-        </button>
+          {notification > 0 && (
+            <span className="absolute -top-2 -right-3 h-5 min-w-6 px-1 text-center rounded-full bg-red-500 text-xs flex items-center justify-center text-white">
+              {notification}
+            </span>
+          )}
+        </Link>
 
         {/* Dark Mode */}
         <button className="text-slate-300 hover:text-white transition">
@@ -44,7 +51,7 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="flex items-center gap-3 cursor-pointer">
-          <Link href={`/user/${user}`}>
+          <Link href={`/user/${userName}`}>
             <h3 className="text-white font-semibold">{user?.split(" ")[0]}</h3>
             <p className="text-xs text-green-400">Online</p>
           </Link>

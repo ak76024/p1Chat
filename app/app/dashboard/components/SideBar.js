@@ -2,6 +2,7 @@
 import {FiHome,FiUsers,FiSettings,FiLogOut,FiBell,} from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import React from 'react'
+import { MdOutlineMessage } from "react-icons/md";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { userNameContext } from "../context/context";
@@ -14,8 +15,13 @@ const SideBar = () => {
             href:"/dashboard"
         },
         {
-            title:"Messages",
+            title:"Notification",
             icon:<FiBell/>,
+            href:"/dashboard/notification"
+        },
+        {
+            title:"Messages",
+            icon:<MdOutlineMessage />,
             href:"/dashboard/messages"
         },
         {

@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { Schema, model } from "mongoose";
+import { Schema, model,models } from "mongoose";
 
 const FriendshipSchema = new Schema({
     sender: {
@@ -14,11 +13,9 @@ const FriendshipSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["p", "a"],
+        enum: ["p", "a","r"],
         default: "p",
     },
 });
 
-const Friendship = model("Friendship", FriendshipSchema);
-
-export default mongoose.models.Friendship || Friendship;
+export default models.Friendship || model("Friendship", FriendshipSchema);

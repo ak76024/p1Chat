@@ -113,6 +113,7 @@ export default function LoginPage() {
 
               <input
                 type="email"
+                tabIndex="1"
                 name="email"
                 onChange={handleChange}
                 value={loginForm.email}
@@ -129,6 +130,7 @@ export default function LoginPage() {
               <input
                 type={showPass ? "text" : "password"}
                 name="password"
+                tabIndex="2"
                 onChange={handleChange}
                 value={loginForm.password}
                 placeholder="Enter your password"
@@ -147,7 +149,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <button onClick={loginReq} disabled={loginBtn} className="w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 bg-blue-600 hover:bg-blue-700 transition py-3 rounded-lg text-white font-semibold">
+            <button tabIndex="3" onClick={loginReq} disabled={loginBtn} className="w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 bg-blue-600 hover:bg-blue-700 transition py-3 rounded-lg text-white font-semibold">
               Login
             </button>
           </div>
