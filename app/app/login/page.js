@@ -164,7 +164,7 @@ export default function LoginPage() {
           {/* Google Button */}
           <button type="button" onClick={() => signIn("google")} className="w-full flex items-center justify-center gap-3 py-3 rounded-lg bg-white text-gray-800 font-semibold hover:bg-gray-100 transition">
             <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              src="google-color.svg"
               alt="Google"
               className="w-5 h-5"
             />
