@@ -27,6 +27,11 @@ export async function GET(req) {
       );
     }
 
+    let self = false;
+    if (userName === session.user.userName) {
+      self = true;
+    }
+
     const user = await User.findOne({
       userName: userName,
     }).select("_id name userName email profilePicture totalFriends gender bio location website");
@@ -49,6 +54,7 @@ export async function GET(req) {
     const responseUser = {
       ...user.toObject(),
       friend,
+      self,
     };
 
     return NextResponse.json({

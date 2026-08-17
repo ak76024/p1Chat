@@ -9,7 +9,6 @@ export async function DELETE(req) {
     try {
         const session = await getServerSession(authOptions);
         const { sender, receiver } = await req.json();
-        console.log(sender, receiver, session);
         if (!sender || !receiver) {
             return NextResponse.json({message: "Missing sender or receiver",success: false,},{ status: 400 });
         }
@@ -27,10 +26,10 @@ export async function DELETE(req) {
             return NextResponse.json({ message: "Friendship not found", success: false }, { status: 404 });
         }
         await Promise.all([
-            User.findByIdAndUpdate(_id = sender, {
+            User.findByIdAndUpdate(sender, {
                 $inc: { totalFriends: -1 },
             }),
-            User.findByIdAndUpdate(_id = receiver, {
+            User.findByIdAndUpdate(receiver, {
                 $inc: { totalFriends: -1 },
             }),
         ]);

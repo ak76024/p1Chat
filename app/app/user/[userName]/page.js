@@ -162,12 +162,13 @@ export default function ProfilePage() {
             default:
                 break;
         }
+        setbtnAction({ showPopup: false, action: "", });
     }
 
     return (
         <main className="min-h-screen relative bg-[#111827] text-white py-16 px-6">
             {btnAction.showPopup && (
-                <div className="fixed right-0 inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                <div className="fixed right-0 inset-0 z-50 flex items-center justify-center bg-[black] backdrop-blur-sm">
                     <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-[#1b2334] p-6 shadow-2xl">
 
                         <h2 className="text-2xl font-bold text-white">
@@ -247,20 +248,19 @@ export default function ProfilePage() {
                                                     <button disabled={btnDisable} onClick={() => { setbtnAction({ showPopup: true, action: "removefriend" }) }} className="w-full px-4 py-3 text-left hover:bg-slate-700 transition">
                                                         Remove Friend
                                                     </button>}
-
+                                                {!profile.self && (<>
+                                                    <button disabled={btnDisable}
+                                                        className="w-full px-4 py-3 text-left hover:bg-slate-700 transition"
+                                                    >
+                                                        Report User
+                                                    </button>
                                                 <button disabled={btnDisable}
-                                                    className="w-full px-4 py-3 text-left hover:bg-slate-700 transition"
-                                                >
-                                                    Report User
-                                                </button>
-
-                                                <button disabled={btnDisable}
-                                                    onClick={blockUser}
-                                                    className="w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/20 transition"
+                                                onClick={blockUser}
+                                                className="w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/20 transition"
                                                 >
                                                     Block User
-                                                </button>
-
+                                                </button></>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
 
                                 <div className="flex gap-8 mt-8">
 
-                                    <div>
+                                    <div className="cursor-pointer">
                                         <h2 className="text-2xl font-bold">
                                             {profile.totalFriends}
                                         </h2>
