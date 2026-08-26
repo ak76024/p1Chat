@@ -168,7 +168,7 @@ export default function ProfilePage() {
     return (
         <main className="min-h-screen relative bg-[#111827] text-white py-16 px-6">
             {btnAction.showPopup && (
-                <div className="fixed right-0 inset-0 z-50 flex items-center justify-center bg-[black] backdrop-blur-sm">
+                <div className="fixed right-0 inset-0 z-50 flex items-center justify-center bg-[#00000070] backdrop-blur-sm">
                     <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-[#1b2334] p-6 shadow-2xl">
 
                         <h2 className="text-2xl font-bold text-white">
@@ -245,7 +245,7 @@ export default function ProfilePage() {
                                                 </button>
 
                                                 {profile.friend &&
-                                                    <button disabled={btnDisable} onClick={() => { setbtnAction({ showPopup: true, action: "removefriend" }) }} className="w-full px-4 py-3 text-left hover:bg-slate-700 transition">
+                                                    <button disabled={btnDisable} onClick={() => {setShowMenu(false);setbtnAction({ showPopup: true, action: "removefriend" })}} className="w-full px-4 py-3 text-left hover:bg-slate-700 transition">
                                                         Remove Friend
                                                     </button>}
                                                 {!profile.self && (<>
