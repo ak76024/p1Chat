@@ -1,12 +1,12 @@
 "use client";
 import Navbar from "./components/Navbar";
-import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
-  const { data: session } = useSession();
   return (
     <>
-      <Navbar />
+      <div className="hidden md:block">
+        <Navbar />
+      </div>
       <main className="flex-1">
         <section className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[

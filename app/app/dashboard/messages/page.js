@@ -18,9 +18,6 @@ function NullMsg() {
 }
 
 function ChatBox() {
-    useEffect(() => {
-        console.log("ChatBox Mounted");
-    }, []);
     const [messages, setMessages] = useState([
         {
             id: 1,
@@ -36,7 +33,7 @@ function ChatBox() {
             id: 3,
             text: "I'm doing great 😊",
             sender: "other",
-        },
+        }
     ]);
 
     const [text, setText] = useState("");
@@ -143,6 +140,7 @@ function ChatBox() {
 
 export default function message() {
     const [activeTab, setactiveTab] = useState("chats");
+    const [showChat, setshowChat] = useState(false);
 
     return (
         <main className="flex w-full h-[98vh] gap-1">
@@ -175,8 +173,7 @@ export default function message() {
                 </div>
             </section>
             <section className="w-2/3 h-full">
-                <NullMsg />
-                {/* <ChatBox/> */}
+                {showChat ? <ChatBox/> : <NullMsg />}
             </section>
         </main>
     );

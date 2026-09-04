@@ -1,17 +1,18 @@
 "use client";
 
-import { FiBell, FiMoon, FiSearch } from "react-icons/fi";
+import { FiBell, FiMoon } from "react-icons/fi";
+import { IoMdMenu } from "react-icons/io";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function Navbar() {
+export default function Navbar({setIsOpen}) {
   const [user, setuser] = useState(null);
   const [userName, setuserName] = useState(null);
   const [notification, setnotification] = useState(0)
   useEffect(() => {
-    (async()=>{
+    (async () => {
       let user = await fetch('/api/user');
-      let {name,userName} = await user.json();
+      let { name, userName } = await user.json();
       setuser(name);
       setuserName(userName);
       let notificationNo = await fetch('/dashboard/api/notifications');
@@ -19,15 +20,15 @@ export default function Navbar() {
       setnotification(notifications.notifications);
     })()
   }, [])
-  
+
   return (
-    <header className="h-20 bg-slate-800 border-b border-slate-700 px-8 flex items-center justify-between">
+    <header className="h-fit py-5 bg-slate-800 border-b border-slate-700 px-8 flex items-center justify-between">
       <div>
-      <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl font-bold">
           Welcome Back, {user} 👋
         </h1>
 
-        <p className="text-gray-200 mt-2">
+        <p className="text-gray-200 hidden md:block mt-2">
           Stay connected with your friends.
         </p>
       </div>
@@ -46,15 +47,17 @@ export default function Navbar() {
 
         {/* Dark Mode */}
         <button className="text-slate-300 hover:text-white transition">
-          <FiMoon size={22} />
+          <FiMoon size={22}/>
         </button>
 
         {/* Profile */}
         <div className="flex items-center gap-3 cursor-pointer">
-          <Link href={`/user/${userName}`}>
+          <Link className="hidden md:block" href={`/user/${userName}`}>
             <h3 className="text-white font-semibold">{user?.split(" ")[0]}</h3>
             <p className="text-xs text-green-400">Online</p>
           </Link>
+          {/* three bar for menu icon */}
+          <IoMdMenu  onClick={()=> setIsOpen(prev=>!prev)} size={30} className="text-slate-300 block md:hidden"/>
         </div>
       </div>
     </header>

@@ -42,7 +42,7 @@ export async function POST(req){
             );
         }
         const hashPass= await bcrypt.hash(password.trim(),10);
-        let updatedUser = await User.findOneAndUpdate({otpHash: check},{$set:{password: hashPass,otpHash:"",otpExpiry:null}});
+        let updatedUser = await User.findOneAndUpdate({otpHash: check},{$set:{password: hashPass,otpHash:"",otpExpiry:null,verified: true}});
         if(updatedUser){
             return NextResponse.json(
                 { message: "Password updated Successfully",changed: true },

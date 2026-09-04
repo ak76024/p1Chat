@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "./components/Navbar";
 import Sidebar from "./components/SideBar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ export default function DashboardLayout({ children }) {
   const { status } = useSession();
   const router = useRouter();
   const [userName, setuserName] = useState()
+  const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     fetch("/api/user")
       .then((res) => res.json())
@@ -35,11 +37,14 @@ export default function DashboardLayout({ children }) {
     <div className="min-h-screen flex text-white bg-gray-800">
       <userNameContext.Provider value={{ userName, setuserName }} >
         {/* Sidebar */}
-        <Sidebar />
+        <Sidebar props={{ isOpen, setIsOpen }} />
 
         {/* Main Content */}
-        <div className="flex flex-col flex-1">
-          <main className="flex-1 ml-65 overflow-y-auto p-2">
+        <div className="flex h-screen flex-col flex-1">
+          <main className="flex-1 overflow-y-auto p-2">
+            <div className="md:hidden block">
+            <Navbar setIsOpen={setIsOpen}/>
+            </div>
             {children}
           </main>
         </div>

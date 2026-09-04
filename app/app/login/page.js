@@ -145,7 +145,7 @@ export default function LoginPage() {
               </label>
 
               <p onClick={() => {setShowLoginForm(false), setloginForm({ email: "", password: "" })}} className="text-blue-400 cursor-pointer hover:underline">
-                Forgot Password?
+                Forgot Password?/Account Verification
               </p>
             </div>
 
@@ -185,7 +185,7 @@ export default function LoginPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
         <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-8">
           <h1 className="text-3xl font-bold text-center text-white mb-2">
-            Forgot Password 
+            Forgot Password And Active Your Account
           </h1>
 
           <p className="text-center text-gray-400 mb-8">

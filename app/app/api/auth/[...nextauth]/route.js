@@ -1,3 +1,4 @@
+
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -27,6 +28,10 @@ export const authOptions = {
 
       if (!user) {
         throw new Error("User not found");
+      }
+
+      if(user.verified == false){
+        throw new Error("User not verified");
       }
 
       const match = await bcrypt.compare(

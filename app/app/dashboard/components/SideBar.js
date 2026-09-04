@@ -1,12 +1,15 @@
 "use client"
 import {FiHome,FiUsers,FiSettings,FiLogOut,FiBell,} from "react-icons/fi";
+import { IoCloseSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import React from 'react'
 import { MdOutlineMessage } from "react-icons/md";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { userNameContext } from "../context/context";
-const SideBar = () => {
+import { GiHidden } from "react-icons/gi";
+const SideBar = ({props}) => {
+    const {isOpen, setIsOpen} = props;
     const {userName} = React.useContext(userNameContext);
     const menu = [
         {
@@ -42,9 +45,10 @@ const SideBar = () => {
     ]
 
     return (
-        <aside className="w-64 h-screen fixed bg-gray-900 text-white flex flex-col">
-            <div className="text-2xl font-bold p-6 border-b border-gray-700">
+        <aside className={`w-64 h-screen fixed md:static ${isOpen? "block":"hidden"} bg-gray-900 text-white md:flex flex-col`}>
+            <div className="text-2xl w-full flex items-center justify-between font-bold p-6 border-b border-gray-700">
                 Dashboard
+                <IoCloseSharp onClick={()=>setIsOpen(prev=>!prev)} className="md:hidden"/>
             </div>
 
             <nav className="flex-1 p-4 space-y-3">
