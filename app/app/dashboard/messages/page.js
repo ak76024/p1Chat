@@ -238,6 +238,11 @@ function ChatList(props) {
                     }
                 </div>
             ))}
+            {users.length === 0 && <div className="flex flex-col items-center justify-center gap-3 mt-10">
+                    <LuMessageSquareText className="text-7xl" />
+                    <h2 className="font-bold text-xl">No messages</h2>
+                    <p>Send a message to start a chat.</p>
+                </div>}
         </div>
     )
 }
@@ -278,7 +283,7 @@ export default function message() {
                 </div>
             </section>
             <section className="w-2/3 h-full">
-                {!showChat ? <ChatBox /> : <NullMsg setsearchUser={setsearchUser} />}
+                {showChat ? <ChatBox /> : <NullMsg setsearchUser={setsearchUser} />}
             </section>
         </main>
     );

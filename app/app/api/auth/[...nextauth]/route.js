@@ -34,6 +34,10 @@ export const authOptions = {
         throw new Error("User not verified");
       }
 
+      if(!user.password) {
+        throw new Error("Password not set");
+      }
+
       const match = await bcrypt.compare(
         credentials.password,
         user.password

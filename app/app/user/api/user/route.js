@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import connectDB from "@/db/connect";
 import User from "@/models/User";
 import Friendship from "@/models/Friendship";
+import Notification from "@/models/Notification";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req) {
   try {
     await connectDB();
-    let friend = false;
+    let friend = {status: false, friendReqId: null, notificationId: null};
     let session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json(
@@ -44,12 +45,19 @@ export async function GET(req) {
     }
     let friendship = await Friendship.findOne({
       $or: [
-        { sender: user._id, receiver: session.user.id, status: "a" },
-        { sender: session.user.id, receiver: user._id, status: "a" },
+        { sender: user._id, receiver: session.user.id},
+        { sender: session.user.id, receiver: user._id},
       ],
     });
-    if (friendship) {
-      friend = true;
+    if (friendship && friendship.status === "a") {
+      friend = {status: "a", friendReqId: friendship._id, notificationId: null};
+    }else if(friendship && friendship.status === "p"){
+      let notification = await Notification.findOne({
+        sender: user._id,
+        user: session.user.id,
+        type: "fr",
+      });
+      friend = {status: "pending",sender: friendship.sender,receiver: friendship.receiver, friendReqId: friendship._id, notificationId: notification?._id};
     }
     const responseUser = {
       ...user.toObject(),

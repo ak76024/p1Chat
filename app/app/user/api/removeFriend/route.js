@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/db/connect";
 import Friendship from "@/models/Friendship";
+import Notification from "@/models/Notification";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import User from "@/models/User";
@@ -10,7 +11,7 @@ export async function DELETE(req) {
         const session = await getServerSession(authOptions);
         const { sender, receiver } = await req.json();
         if (!sender || !receiver) {
-            return NextResponse.json({message: "Missing sender or receiver",success: false,},{ status: 400 });
+            return NextResponse.json({ message: "Missing sender or receiver", success: false, }, { status: 400 });
         }
         if (!session || session.user.id.toString() !== sender) {
             return NextResponse.json({ message: "Unauthorized", success: false }, { status: 401 });
@@ -25,14 +26,23 @@ export async function DELETE(req) {
         if (!friendship) {
             return NextResponse.json({ message: "Friendship not found", success: false }, { status: 404 });
         }
-        await Promise.all([
-            User.findByIdAndUpdate(sender, {
-                $inc: { totalFriends: -1 },
-            }),
-            User.findByIdAndUpdate(receiver, {
-                $inc: { totalFriends: -1 },
-            }),
-        ]);
+        if (friendship.status === "p") {
+            await Notification.findOneAndDelete({
+                sender: sender,
+                user: receiver,
+                type: "fr",
+            });
+        }
+        if (friendship.status === "a") {
+            await Promise.all([
+                User.findByIdAndUpdate(sender, {
+                    $inc: { totalFriends: -1 },
+                }),
+                User.findByIdAndUpdate(receiver, {
+                    $inc: { totalFriends: -1 },
+                }),
+            ]);
+        }
         return NextResponse.json({
             message: "Friend removed successfully",
             success: true

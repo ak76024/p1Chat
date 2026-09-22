@@ -26,7 +26,7 @@ export default function ProfilePage() {
                     toast.error(data.message, { theme: "dark" });
                     setProfile(null);
                 }
-            });
+            })
     }
 
     useEffect(() => {
@@ -115,12 +115,12 @@ export default function ProfilePage() {
             toast.error(`${error.message}`, { theme: "dark" });
         } finally {
             toast.dismiss(loading);
+            fethUser();
         }
     }
 
     const removerFirend = async () => {
         setbtnAction({ showPopup: false, action: "", });
-        console.log(session.user.id, profile._id);
         let loading = toast.loading("Removing Friend...", { theme: "dark" });
         setbtnDisable(true);
         try {
@@ -159,10 +159,44 @@ export default function ProfilePage() {
             case "blockuser":
                 blockUser();
                 break;
+            case "cancelFriendReq":
+                removerFirend();
+                break;
             default:
                 break;
         }
         setbtnAction({ showPopup: false, action: "", });
+    }
+
+    const acceptfriendreq = async (fId, nId) => {
+        console.log(fId, nId);
+        setbtnDisable(true);
+        let loading = toast.loading("Accepting Friend Request...", { theme: "dark" });
+        try {
+            const res = await fetch("/dashboard/api/friendReq", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    fId,
+                    nId,
+                    action: "fReqAccept",
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success(data.message, { theme: "dark" });
+                fethUser();
+            } else {
+                toast.error(data.message, { theme: "dark" });
+            }
+        } catch (error) {
+            toast.error(`${error.message}`, { theme: "dark" });
+        } finally {
+            toast.dismiss(loading);
+            setbtnDisable(false);
+        }
     }
 
     return (
@@ -177,6 +211,7 @@ export default function ProfilePage() {
 
                         <p className="mt-3 text-gray-300">
                             {btnAction.action === "removefriend" ? "Are you sure you want to remove this user from your friend list?" : btnAction.action === "blockuser" ? "Are you sure you want to block this user?" : ""}
+                            {btnAction.action === "cancelFriendReq" && "Are you sure you want to cancel this friend request?"}
                         </p>
 
                         <div className="mt-6 flex justify-end gap-3">
@@ -217,7 +252,7 @@ export default function ProfilePage() {
                             </div>
 
                             {/* Info */}
-                            <div className="flex-1 pt-20">
+                            <div className="flex-1 md:pt-20 ">
 
                                 <div className="flex gap-10">
                                     <h1 className="text-4xl font-bold">
@@ -232,7 +267,7 @@ export default function ProfilePage() {
                                         </button>
 
                                         {showMenu && (
-                                            <div className="absolute mt-2 left-[120%] w-48 rounded-xl bg-[#1f2937] border border-slate-700 shadow-xl overflow-hidden z-50">
+                                            <div className="absolute mt-2 -right-[120%] w-48 rounded-xl bg-[#1f2937] border border-slate-700 shadow-xl overflow-hidden z-50">
                                                 <button
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(window.location.href);
@@ -244,8 +279,8 @@ export default function ProfilePage() {
                                                     Copy Profile Link
                                                 </button>
 
-                                                {profile.friend &&
-                                                    <button disabled={btnDisable} onClick={() => {setShowMenu(false);setbtnAction({ showPopup: true, action: "removefriend" })}} className="w-full px-4 py-3 text-left hover:bg-slate-700 transition">
+                                                {profile.friend.status === "a" &&
+                                                    <button disabled={btnDisable} onClick={() => { setShowMenu(false); setbtnAction({ showPopup: true, action: "removefriend" }) }} className="w-full px-4 py-3 text-left hover:bg-slate-700 transition">
                                                         Remove Friend
                                                     </button>}
                                                 {!profile.self && (<>
@@ -254,12 +289,12 @@ export default function ProfilePage() {
                                                     >
                                                         Report User
                                                     </button>
-                                                <button disabled={btnDisable}
-                                                onClick={blockUser}
-                                                className="w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/20 transition"
-                                                >
-                                                    Block User
-                                                </button></>
+                                                    <button disabled={btnDisable}
+                                                        onClick={blockUser}
+                                                        className="w-full px-4 py-3 text-left text-red-400 hover:bg-red-500/20 transition"
+                                                    >
+                                                        Block User
+                                                    </button></>
                                                 )}
                                             </div>
                                         )}
@@ -339,9 +374,18 @@ export default function ProfilePage() {
                                         </button>
                                     ) : (
                                         <>
-                                            {!profile.friend &&
+                                            {!profile.friend.status &&
                                                 <button disabled={btnDisable} onClick={addfriend} className={btnSty}>
                                                     Add Friend
+                                                </button>
+                                            }
+                                            {profile.friend.status === "pending" && profile.friend.sender === session.user.id &&
+                                                <button disabled={btnDisable} onClick={() => { setShowMenu(false); setbtnAction({ showPopup: true, action: "cancelFriendReq" }) }} className={btnSty}>
+                                                    Cancel Friend Request
+                                                </button>}
+                                            {profile.friend.status === "pending" && profile.friend.receiver === session.user.id &&
+                                                <button onClick={() => acceptfriendreq(profile.friend.friendReqId, profile.friend.notificationId)} disabled={btnDisable} className={btnSty}>
+                                                    Accept Friend Request
                                                 </button>
                                             }
 
