@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { useParams } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
@@ -239,10 +240,10 @@ function ChatList(props) {
                 </div>
             ))}
             {users.length === 0 && <div className="flex flex-col items-center justify-center gap-3 mt-10">
-                    <LuMessageSquareText className="text-7xl" />
-                    <h2 className="font-bold text-xl">No messages</h2>
-                    <p>Send a message to start a chat.</p>
-                </div>}
+                <LuMessageSquareText className="text-7xl" />
+                <h2 className="font-bold text-xl">No messages</h2>
+                <p>Send a message to start a chat.</p>
+            </div>}
         </div>
     )
 }
@@ -250,8 +251,7 @@ function ChatList(props) {
 export default function message() {
     const [activeTab, setactiveTab] = useState("chats");
     const [showChat, setshowChat] = useState(false);
-    const [searchUser, setsearchUser] = useState(false)
-
+    const [searchUser, setsearchUser] = useState(false);
     return (
         <main className="flex w-full h-[98vh] gap-1">
             {searchUser && <SearchUser setsearchUser={setsearchUser} />}
@@ -266,7 +266,6 @@ export default function message() {
                     >
                         Chats
                     </button>
-
                     <button
                         onClick={() => setactiveTab("requests")}
                         className={`flex-1 py-3 ${activeTab === "requests"
@@ -277,7 +276,6 @@ export default function message() {
                         Requests
                     </button>
                 </div>
-
                 <div className="mt-5">
                     <ChatList activeTab={activeTab} />
                 </div>

@@ -25,7 +25,7 @@ const SideBar = ({ props }) => {
         {
             title: "Messages",
             icon: <MdOutlineMessage />,
-            href: "/dashboard/messages"
+            href: "/dashboard/messages/null"
         },
         {
             title: "Users",
