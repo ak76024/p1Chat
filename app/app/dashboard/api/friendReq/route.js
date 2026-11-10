@@ -28,13 +28,13 @@ export async function PUT(data) {
         if (action === "fReqAccept") {
             friendReq.status = "a";
             await friendReq.save();
-            await Notification.updateOne({ _id: nId }, { $set: { read: true } });
+            await Notification.updateOne({ _id: nId , user: session.user.nId}, { $set: { read: true } });
             await User.updateOne({ _id: session.user.id }, { $inc: { totalFriends: 1 } });
             await User.updateOne({ _id: friendReq.sender }, { $inc: { totalFriends: 1 } });
             return NextResponse.json({ message: "Friend Request Accepted",success: true }, { status: 200 });
         } else if (action === "fReqDecline") {
             await Friendship.deleteOne({ _id: fId });
-            await Notification.updateOne({ _id: nId }, { $set: { read: true } });
+            await Notification.updateOne({ _id: nId, user: session.user.id}, { $set: { read: true } });
             return NextResponse.json({ message: "Friend Request Declined",success: true }, { status: 200 });
         }else{
             return NextResponse.json({ message: "Invalid Action",success: false }, { status: 400 });

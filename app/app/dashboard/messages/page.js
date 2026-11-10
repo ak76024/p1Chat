@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
-import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
@@ -24,27 +24,35 @@ function NullMsg(props) {
 function SearchUser(props) {
     const { setsearchUser } = props
     const [search, setSearch] = useState("");
-    const [users, setUsers] = useState([
-        {
-            id: 1,
-            name: "Akash Kumar",
-            img: "/avatar.gif",
-            userName: "ak76024",
-        },
-        {
-            id: 2, name: "Akash Kumar", img: "/avatar.gif", userName: "ak76024",
-        },
-        { id: 3, name: "Akash Kumar", img: "/avatar.gif", userName: "ak76024", },
-        { id: 4, name: "Akash Kumar", img: "/avatar.gif", userName: "ak76024", }
-    ]);
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(async () => {
+            try {
+                const req = await fetch(`/api/searchUser?search=${encodeURIComponent(search.trim())}`);
+                const data = await req.json();
+                if (!data.searchUser) {
+                    setUsers([]);
+                    toast.error(data.message, { theme: "dark" });
+                    return
+                }
+                setUsers(data.user);
+            } catch (error) {
+                toast.error(`${error.message}`, { theme: "dark" });
+            }
+        }, 2000)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [search])
+
     return (
         <div className="w-screen h-screen overflow-y-scroll bg-[#000000db] top-0 left-0 flex z-10 flex-col fixed justify-start p-10 items-center gap-5">
             <IoClose onClick={() => { setSearch(""); setsearchUser(false) }} className="absolute text-3xl top-5 right-10 text-white cursor-pointer" />
-            <input type="text" placeholder="Search user..." className="bg-slate-800 w-1/3 text-white px-4 py-3 rounded-full outline-none" />
+            <input onChange={(e) => setSearch(e.target.value)} value={search} type="text" placeholder="Search user..." className="bg-slate-800 w-1/3 text-white px-4 py-3 rounded-full outline-none" />
             <div className="flex flex-col items-center gap-3 w-1/2">
                 {users.map((user) => (
-                    <div key={user.id} className="flex gap-2 justify-start items-center bg-slate-800 rounded-full px-4 py-2 w-2/4 cursor-pointer">
-                        <img src={user.img} alt="" className="w-10 h-10 rounded-full bg-cover bg-no-repeat bg-center" />
+                    <div key={user.userName} className="flex gap-2 justify-start items-center bg-slate-800 rounded-full px-4 py-2 w-2/4 cursor-pointer">
+                        <img src={user?.profilePicture || "/avatar.gif"} alt="" className="w-10 h-10 rounded-full bg-cover bg-no-repeat bg-center" />
                         <div>
                             <h1 className="text-lg font-semibold">{user.name}</h1>
                             <p className="text-gray-400">{user.userName}</p>

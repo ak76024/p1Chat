@@ -169,7 +169,6 @@ export default function ProfilePage() {
     }
 
     const acceptfriendreq = async (fId, nId) => {
-        console.log(fId, nId);
         setbtnDisable(true);
         let loading = toast.loading("Accepting Friend Request...", { theme: "dark" });
         try {

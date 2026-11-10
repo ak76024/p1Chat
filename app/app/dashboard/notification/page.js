@@ -92,7 +92,7 @@ export default function NotificationPage() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ id,readone:true }),
+                body: JSON.stringify({ id, readone: true }),
             })
             let res = await req.json();
             if (res.success) {
@@ -206,9 +206,11 @@ export default function NotificationPage() {
                             />
                         </Link>
                     ) : (
-                        <div className="w-14 h-14 rounded-full bg-[#24324b] flex items-center justify-center">
-                            {getIcon(item.type)}
-                        </div>
+                        <Link href={`/user/${item.sender.userName}`}>
+                            <div className="w-14 h-14 rounded-full bg-[#24324b] flex items-center justify-center">
+                                {getIcon(item.type)}
+                            </div>
+                        </Link>
                     )}
                     <div>
                         <p className="text-gray-200">
